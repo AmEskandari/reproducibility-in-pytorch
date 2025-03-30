@@ -1,6 +1,6 @@
 # PyTorch Reproducibility Test Suite
 
-This repository contains tests that demonstrate reproducibility challenges in PyTorch, as discussed in the blog post "Reproducibility in PyTorch: Myth or Reality?".
+This repository contains tests that demonstrate reproducibility challenges in PyTorch, specifically focused on cuDNN algorithms and GNN scatter operations.
 
 ## Table of Contents
 
@@ -8,24 +8,24 @@ This repository contains tests that demonstrate reproducibility challenges in Py
 - [Setup](#setup)
 - [Test Descriptions](#test-descriptions)
 - [Running Tests](#running-tests)
-- [Citation](#citation)
 - [License](#license)
 
 ## Overview
 
-While PyTorch is a powerful deep learning framework, achieving perfect reproducibility across runs and platforms can be challenging. This test suite demonstrates common reproducibility issues including:
+While PyTorch is a powerful deep learning framework, achieving perfect reproducibility across runs can be challenging. This repository demonstrates two common reproducibility issues:
 
-1. Floating-point non-associativity
-2. cuDNN algorithm selection variations
-3. GNN scatter operations non-determinism
-4. Training divergence over time
+1. cuDNN algorithm selection variations
+2. GNN scatter operations non-determinism
 
 ## Setup
 
 ### Prerequisites
 
 - Python 3.9+
-- CUDA-enabled GPU (optional, but recommended)
+- CUDA-enabled GPU (required for both tests)
+- PyTorch with CUDA support
+- PyTorch Geometric (for GNN test)
+- NetworkX (for graph generation)
 
 ### Installation
 
@@ -39,47 +39,46 @@ cd reproducibility-in-pytorch
 # Create and activate the conda environment
 conda env create -f environment.yml
 conda activate pytorch-reproducibility
-
-# Check if all dependencies are installed
-python run_tests.py --check-deps
 ```
 
 ## Test Descriptions
 
-### Floating-Point Non-Associativity Test
-Demonstrates how the non-associative nature of floating-point arithmetic can lead to different results depending on computation order, particularly in parallel processing environments like GPUs.
+### cuDNN Algorithm Selection Test (`test_cudnn_algorithms.py`)
 
-### cuDNN Algorithm Selection Test
-Shows how cuDNN's algorithm selection affects reproducibility, especially when `torch.backends.cudnn.benchmark` is enabled and input shapes change.
+This test shows how cuDNN's algorithm selection affects reproducibility, especially when `torch.backends.cudnn.benchmark` is enabled. It demonstrates:
 
-### GNN Reproducibility Test
-Tests the reproducibility of Graph Neural Networks, which often use non-deterministic operations like scatter_add for message passing between nodes.
+- How enabling `cudnn.benchmark` can lead to different results between runs
+- Performance differences between deterministic and non-deterministic settings
+- How changing batch sizes affects algorithm selection and results
 
-### Training Divergence Test
-Demonstrates how small floating-point differences can accumulate over training iterations, leading to significant divergence in model behavior despite using the same seeds.
+### GNN Reproducibility Test (`test_gnn_reproducibility.py`)
+
+Tests the reproducibility of Graph Neural Networks, specifically focusing on:
+
+- Non-deterministic behavior in torch_scatter operations used by GNN layers
+- How identical inputs and seeds can still produce different results due to internal parallelism
+- Measurements of the magnitude of differences between runs
 
 ## Running Tests
 
-You can run individual tests or all tests at once:
+You can run the individual tests directly:
 
 ```bash
-# Run all tests
-python run_tests.py --all
+# Run cuDNN algorithm test
+python test_cudnn_algorithms.py
 
-# Run individual tests
-python run_tests.py --fp      # Floating-point tests
-python run_tests.py --cudnn   # cuDNN algorithm tests
-python run_tests.py --gnn     # GNN tests
-python run_tests.py --training  # Training divergence tests
-
-# Check dependencies
-python run_tests.py --check-deps
+# Run GNN reproducibility test
+python test_gnn_reproducibility.py
 ```
 
 For best reproducibility results in your PyTorch code, use the following settings:
 
 ```python
 def set_seed(seed=42): 
+    import random
+    import numpy as np
+    import torch
+    
     random.seed(seed) 
     np.random.seed(seed) 
     torch.manual_seed(seed) 
@@ -87,20 +86,8 @@ def set_seed(seed=42):
     torch.cuda.manual_seed_all(seed) 
     torch.backends.cudnn.deterministic = True 
     torch.backends.cudnn.benchmark = False
-```
-
-## Citation
-
-If you use this test suite in your research, please cite:
-
-```bibtex
-@misc{eskandari2025pytorch,
-  author       = {Eskandari, Amir},
-  title        = {Reproducibility in PyTorch: Myth or Reality?},
-  year         = {2025},
-  howpublished = {\url{https://github.com/yourusername/reproducibility-in-pytorch}},
-  note         = {Accessed: 2025-03-29. Licensed under the MIT License}
-}
+    # For PyTorch 1.8+
+    torch.use_deterministic_algorithms(True)
 ```
 
 ## License
