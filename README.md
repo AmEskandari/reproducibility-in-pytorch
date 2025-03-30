@@ -8,6 +8,7 @@ This repository contains tests that demonstrate reproducibility challenges in Py
 - [Setup](#setup)
 - [Test Descriptions](#test-descriptions)
 - [Running Tests](#running-tests)
+- [Citation](#citation)
 - [License](#license)
 
 ## Overview
@@ -86,6 +87,20 @@ def set_seed(seed=42):
     torch.cuda.manual_seed_all(seed) 
     torch.backends.cudnn.deterministic = True 
     torch.backends.cudnn.benchmark = False
+```
+
+## Citation
+
+If you use this test suite in your research, please cite:
+
+```bibtex
+@misc{eskandari2025pytorch,
+  author       = {Eskandari, Amir},
+  title        = {Reproducibility in PyTorch: Myth or Reality?},
+  year         = {2025},
+  howpublished = {\url{https://github.com/yourusername/reproducibility-in-pytorch}},
+  note         = {Accessed: 2025-03-29. Licensed under the MIT License}
+}
 ```
 
 ## License
