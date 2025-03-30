@@ -8,6 +8,7 @@ This repository contains tests that demonstrate reproducibility challenges in Py
 - [Setup](#setup)
 - [Test Descriptions](#test-descriptions)
 - [Running Tests](#running-tests)
+- [Citation](#citation)
 - [License](#license)
 
 ## Overview
@@ -88,6 +89,20 @@ def set_seed(seed=42):
     torch.backends.cudnn.benchmark = False
     # For PyTorch 1.8+
     torch.use_deterministic_algorithms(True)
+```
+
+## Citation
+
+If you use this test suite in your research or blog post, please cite:
+
+```bibtex
+@misc{eskandari2023pytorch,
+  author       = {Eskandari, Amir},
+  title        = {Reproducibility in PyTorch: Understanding Non-Deterministic Operations},
+  year         = {2023},
+  howpublished = {\url{https://github.com/amirziai/reproducibility-in-pytorch}},
+  note         = {Accessed: \today}
+}
 ```
 
 ## License
