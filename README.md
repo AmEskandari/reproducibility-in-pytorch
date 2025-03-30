@@ -100,7 +100,7 @@ If you use this test suite in your research or blog post, please cite:
   author       = {Eskandari, Amir},
   title        = {Reproducibility in PyTorch: Understanding Non-Deterministic Operations},
   year         = {2023},
-  howpublished = {\url{https://github.com/amirziai/reproducibility-in-pytorch}},
+  howpublished = {\url{https://ameskandari.github.io/blog-main/posts/reproducibility-in-pytorch/}},
   note         = {Accessed: \today}
 }
 ```
